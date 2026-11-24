@@ -1,9 +1,10 @@
-from . import cards, coordinates, dictionary, release, sampling
+from . import cards, coordinates, dictionary, focus_fit, release, sampling
 from .db import dump, require
 
 
 INPUT = {
     "lot": coordinates.register_lot,
+    "focus-capture": focus_fit.record,
     "map": coordinates.ingest,
     "anchors": coordinates.add_anchors,
     "card": cards.register,

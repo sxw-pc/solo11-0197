@@ -1,3 +1,4 @@
+from . import focus_review
 import argparse
 import json
 import sqlite3
@@ -67,6 +68,9 @@ def parser():
     commands.add_parser("replay").add_argument("file")
     commands.add_parser("audit")
     commands.add_parser("project").add_argument("session")
+    focus = commands.add_parser("focus-review")
+    focus.add_argument("scan")
+    focus.add_argument("file", help="JSON array of focus checks")
     commands.add_parser("plan").add_argument("plan")
     for name in ("recompute", "status", "publish", "export"):
         operation = commands.add_parser(name)
@@ -103,6 +107,8 @@ def dispatch(db, args):
         return coordinates.project(db, args.session)
     if command == "contact":
         return cards.inspect(db, args.card, args.minute, args.site, args.session, args.touchdown)
+    if command == "focus-review":
+        return focus_review.review(db, args.scan, read_json(args.file))
     if command == "plan":
         return sampling.inspect(db, args.plan)
     if command == "export":

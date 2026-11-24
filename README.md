@@ -63,3 +63,14 @@ python -B -m wafer_retest --db ops.db publish LOT-P7
 - `journal-export` 导出已接收的结构化来源和决定；`replay FILE` 在空库恢复这些命令及其结果。来源保留结构化内容，文件的原始空白与编码字节没有纳入证据签名。将日志文件保存到本地可独立保管的位置，便于台账丢失时重建。
 
 首版坐标模型适用于正交等格距轴和整数平移；同批晶圆使用同一产品掩膜。项目范围是本地文件和台账，量产设备协议、外部 MES、数字签名核验及生产数据均在范围之外。
+
+
+## 载台对焦量尺采录
+
+`focus-capture` 收同一扫描的具名 x/y 参考点及有符号整数高度。参考点可来自离线量尺文件。`focus-review` 用三个不共线点计算精确参考面并核对其余参考点。再以原始签认的设定和包含端点的允许焦差复核每个位置。参考不足或冲突时，结果待复核。采录可随原 journal 回放。
+
+```powershell
+python -B -m wafer_retest --db focus.db init
+python -B -m wafer_retest --db focus.db load fixtures/focus-plane.json
+python -B -m wafer_retest --db focus.db focus-review STAGE-Z1 fixtures/focus-checks.json
+```
