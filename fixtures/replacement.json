@@ -1,0 +1,89 @@
+[
+  {
+    "command": "map",
+    "args": {
+      "session": "RETEST-2",
+      "lot": "LOT-P7",
+      "card": "PC-3",
+      "measured_at": 24,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "plan": "PLAN-P7",
+      "measurements": [
+        {
+          "id": "00-ET",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "TD1",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "00-WAT",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "TD1",
+          "channel": "WAT",
+          "code": "0",
+          "value": 100
+        },
+        {
+          "id": "20-ET",
+          "u": 0,
+          "v": 0,
+          "site": 2,
+          "touchdown": "TD1",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "20-WAT",
+          "u": 0,
+          "v": 0,
+          "site": 2,
+          "touchdown": "TD1",
+          "channel": "WAT",
+          "code": "0",
+          "value": 100
+        }
+      ],
+      "wafer": "W01"
+    }
+  },
+  {
+    "command": "anchors",
+    "args": {
+      "session": "RETEST-2",
+      "anchors": [
+        {
+          "id": "F00",
+          "u": 20,
+          "v": 0,
+          "x": 0,
+          "y": 0,
+          "source": "FIDUCIAL"
+        },
+        {
+          "id": "F10",
+          "u": 10,
+          "v": 0,
+          "x": 1,
+          "y": 0,
+          "source": "FIDUCIAL"
+        },
+        {
+          "id": "F01",
+          "u": 20,
+          "v": 20,
+          "x": 0,
+          "y": 1,
+          "source": "FIDUCIAL"
+        }
+      ]
+    }
+  }
+]

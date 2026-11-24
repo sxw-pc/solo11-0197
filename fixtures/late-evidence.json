@@ -1,0 +1,16 @@
+[
+  {
+    "command": "evidence",
+    "args": {
+      "evidence": "SIGNED-TD1",
+      "card": "PC-2",
+      "starts": 22,
+      "ends": 23,
+      "scope": "TOUCHDOWN",
+      "session": "RETEST-1",
+      "touchdown": "TD1",
+      "source": "SIGNED",
+      "verdict": "BLOCK"
+    }
+  }
+]

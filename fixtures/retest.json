@@ -1,0 +1,126 @@
+[
+  {
+    "command": "create-plan",
+    "args": {
+      "plan": "PLAN-P7",
+      "lot": "LOT-P7",
+      "opens": 20,
+      "closes": 28,
+      "capacity": 2
+    }
+  },
+  {
+    "command": "map",
+    "args": {
+      "session": "RETEST-1",
+      "lot": "LOT-P7",
+      "card": "PC-2",
+      "measured_at": 22,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "plan": "PLAN-P7",
+      "measurements": [
+        {
+          "id": "00-ET",
+          "u": 0,
+          "v": 40,
+          "site": 1,
+          "touchdown": "TD1",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "00-WAT",
+          "u": 0,
+          "v": 40,
+          "site": 1,
+          "touchdown": "TD1",
+          "channel": "WAT",
+          "code": "0",
+          "value": 100
+        },
+        {
+          "id": "20-ET",
+          "u": 0,
+          "v": 0,
+          "site": 2,
+          "touchdown": "TD1",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "20-WAT",
+          "u": 0,
+          "v": 0,
+          "site": 2,
+          "touchdown": "TD1",
+          "channel": "WAT",
+          "code": "0",
+          "value": 100
+        },
+        {
+          "id": "10-ET",
+          "u": 0,
+          "v": 20,
+          "site": 1,
+          "touchdown": "TD2",
+          "channel": "ET",
+          "code": "9",
+          "value": 1
+        },
+        {
+          "id": "10-WAT",
+          "u": 0,
+          "v": 20,
+          "site": 1,
+          "touchdown": "TD2",
+          "channel": "WAT",
+          "code": "0",
+          "value": 100
+        }
+      ],
+      "wafer": "W01"
+    }
+  },
+  {
+    "command": "anchors",
+    "args": {
+      "session": "RETEST-1",
+      "anchors": [
+        {
+          "id": "F00",
+          "u": 0,
+          "v": 40,
+          "x": 0,
+          "y": 0,
+          "source": "FIDUCIAL"
+        },
+        {
+          "id": "F10",
+          "u": 0,
+          "v": 20,
+          "x": 1,
+          "y": 0,
+          "source": "FIDUCIAL"
+        },
+        {
+          "id": "F01",
+          "u": 10,
+          "v": 40,
+          "x": 0,
+          "y": 1,
+          "source": "FIDUCIAL"
+        }
+      ]
+    }
+  },
+  {
+    "command": "transition-plan",
+    "args": {
+      "plan": "PLAN-P7",
+      "state": "SEALED"
+    }
+  }
+]
