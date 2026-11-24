@@ -4,7 +4,7 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-from . import audit, cards, coordinates, release, sampling, workflow
+from . import audit, cards, coordinates, release, sampling, surface_review, workflow
 from .db import RuleError, connect, initialize, require, transaction
 
 
@@ -63,6 +63,10 @@ def parser():
     commands.add_parser("load", help="apply a JSON list of input commands atomically").add_argument("file")
     for name in workflow.INPUT:
         commands.add_parser(name).add_argument("file", help="JSON object with command inputs")
+    surface = commands.add_parser("surface-review")
+    surface.add_argument("scan")
+    surface.add_argument("--min-scratch", type=int, required=True)
+    surface.add_argument("--cutoff", type=int)
     commands.add_parser("journal-export")
     commands.add_parser("replay").add_argument("file")
     commands.add_parser("audit")
@@ -88,6 +92,8 @@ def dispatch(db, args):
         return workflow.apply(db, command, read_json(args.file))[0]
     if command in workflow.DECISIONS:
         return workflow.apply(db, command, {"lot": args.lot})[0]
+    if command == "surface-review":
+        return surface_review.review(db, args.scan, args.min_scratch, args.cutoff)
     if command == "journal-export":
         return audit.export_journal(db)
     if command == "replay":

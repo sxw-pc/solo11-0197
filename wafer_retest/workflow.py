@@ -1,8 +1,9 @@
-from . import cards, coordinates, dictionary, release, sampling
+from . import cards, coordinates, dictionary, release, sampling, surface_capture
 from .db import dump, require
 
 
 INPUT = {
+    surface_capture.COMMAND: surface_capture.record,
     "lot": coordinates.register_lot,
     "map": coordinates.ingest,
     "anchors": coordinates.add_anchors,
