@@ -4,7 +4,7 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-from . import audit, cards, coordinates, release, sampling, workflow
+from . import audit, cards, coordinates, release, sampling, workflow, conditioning
 from .db import RuleError, connect, initialize, require, transaction
 
 
@@ -68,6 +68,11 @@ def parser():
     commands.add_parser("audit")
     commands.add_parser("project").add_argument("session")
     commands.add_parser("plan").add_argument("plan")
+    environment_trace = commands.add_parser("environment-trace")
+    environment_trace.add_argument("chamber")
+    environment_trace.add_argument("start", type=int)
+    environment_trace.add_argument("end", type=int)
+    environment_trace.add_argument("--max-age", type=int, required=True)
     for name in ("recompute", "status", "publish", "export"):
         operation = commands.add_parser(name)
         operation.add_argument("lot")
@@ -101,6 +106,8 @@ def dispatch(db, args):
         return demo(db)
     if command == "project":
         return coordinates.project(db, args.session)
+    if command == "environment-trace":
+        return conditioning.trace(db, args.chamber, args.start, args.end, args.max_age)
     if command == "contact":
         return cards.inspect(db, args.card, args.minute, args.site, args.session, args.touchdown)
     if command == "plan":

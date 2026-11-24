@@ -63,3 +63,14 @@ python -B -m wafer_retest --db ops.db publish LOT-P7
 - `journal-export` 导出已接收的结构化来源和决定；`replay FILE` 在空库恢复这些命令及其结果。来源保留结构化内容，文件的原始空白与编码字节没有纳入证据签名。将日志文件保存到本地可独立保管的位置，便于台账丢失时重建。
 
 首版坐标模型适用于正交等格距轴和整数平移；同批晶圆使用同一产品掩膜。项目范围是本地文件和台账，量产设备协议、外部 MES、数字签名核验及生产数据均在范围之外。
+
+## 腔体环境收件
+
+恢复探针作业前可收取离线环境监视器的成对读数。温度、台面温度和露点以十分之一摄氏度录入。问询按半开分钟窗进行。每条记录仅在配置的采样有效期内可用于判断，台面温度等于或低于露点时提示湿风险，过期或对同分钟有相反结论时标明未知。
+
+```powershell
+python -B -m wafer_retest --db env.db init
+python -B -m wafer_retest --db env.db environment-record fixtures/environment-readings.json
+python -B -m wafer_retest --db env.db environment-trace DRY-1 12 26 --max-age 4
+python -B -m wafer_retest --db env.db audit
+```

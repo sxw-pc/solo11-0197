@@ -1,8 +1,9 @@
-from . import cards, coordinates, dictionary, release, sampling
+from . import cards, coordinates, dictionary, environment, release, sampling
 from .db import dump, require
 
 
 INPUT = {
+    "environment-record": environment.record,
     "lot": coordinates.register_lot,
     "map": coordinates.ingest,
     "anchors": coordinates.add_anchors,

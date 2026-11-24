@@ -1,0 +1,27 @@
+{
+  "chamber": "DRY-1",
+  "monitor": "M-1",
+  "readings": [
+    {
+      "id": "C-1",
+      "minute": 12,
+      "air_tenths": 250,
+      "surface_tenths": 180,
+      "dewpoint_tenths": 160
+    },
+    {
+      "id": "C-2",
+      "minute": 17,
+      "air_tenths": 240,
+      "surface_tenths": 155,
+      "dewpoint_tenths": 155
+    },
+    {
+      "id": "C-3",
+      "minute": 21,
+      "air_tenths": 260,
+      "surface_tenths": 220,
+      "dewpoint_tenths": 140
+    }
+  ]
+}
