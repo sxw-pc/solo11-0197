@@ -1,0 +1,67 @@
+[
+  {
+    "command": "environment-record",
+    "args": {
+      "chamber": "PREP-SLOT",
+      "monitor": "CM-2",
+      "readings": [
+        {
+          "id": "M12-LEFT",
+          "minute": 12,
+          "air_tenths": 200,
+          "surface_tenths": 180,
+          "dewpoint_tenths": 160,
+          "slot": "LEFT"
+        },
+        {
+          "id": "M12-RIGHT",
+          "minute": 12,
+          "air_tenths": 200,
+          "surface_tenths": 180,
+          "dewpoint_tenths": 185,
+          "slot": "RIGHT"
+        },
+        {
+          "id": "M15-LEFT",
+          "minute": 15,
+          "air_tenths": 200,
+          "surface_tenths": 180,
+          "dewpoint_tenths": 160,
+          "slot": "LEFT"
+        },
+        {
+          "id": "M15-RIGHT",
+          "minute": 15,
+          "air_tenths": 200,
+          "surface_tenths": 180,
+          "dewpoint_tenths": 160,
+          "slot": "RIGHT"
+        }
+      ]
+    }
+  },
+  {
+    "command": "slot-handover",
+    "args": {
+      "handover": "HAND-LEFT-BOX",
+      "chamber": "PREP-SLOT",
+      "slot": "LEFT",
+      "box": "BOX-LEFT",
+      "starts": 12,
+      "ends": 18,
+      "signers": ["CHEN", "PARK"]
+    }
+  },
+  {
+    "command": "slot-handover",
+    "args": {
+      "handover": "HAND-RIGHT-BOX",
+      "chamber": "PREP-SLOT",
+      "slot": "RIGHT",
+      "box": "BOX-RIGHT",
+      "starts": 12,
+      "ends": 18,
+      "signers": ["CHEN", "PARK"]
+    }
+  }
+]

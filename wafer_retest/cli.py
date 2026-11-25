@@ -73,6 +73,18 @@ def parser():
     environment_trace.add_argument("start", type=int)
     environment_trace.add_argument("end", type=int)
     environment_trace.add_argument("--max-age", type=int, required=True)
+    box_certificate = commands.add_parser("box-certificate", aliases=["certificate", "wafer-certificate"])
+    box_certificate.add_argument("chamber")
+    box_certificate.add_argument("box")
+    box_certificate.add_argument("start", type=int)
+    box_certificate.add_argument("end", type=int)
+    box_certificate.add_argument("--max-age", type=int, default=4)
+    batch_certificate = commands.add_parser(
+        "batch-certificate", aliases=["chamber-certificate", "joint-certificate"])
+    batch_certificate.add_argument("chamber")
+    batch_certificate.add_argument("start", type=int)
+    batch_certificate.add_argument("end", type=int)
+    batch_certificate.add_argument("--max-age", type=int, default=4)
     for name in ("recompute", "status", "publish", "export"):
         operation = commands.add_parser(name)
         operation.add_argument("lot")
@@ -108,6 +120,12 @@ def dispatch(db, args):
         return coordinates.project(db, args.session)
     if command == "environment-trace":
         return conditioning.trace(db, args.chamber, args.start, args.end, args.max_age)
+    if command in ("box-certificate", "certificate", "wafer-certificate"):
+        return conditioning.box_certificate(
+            db, args.chamber, args.box, args.start, args.end, args.max_age)
+    if command in ("batch-certificate", "chamber-certificate", "joint-certificate"):
+        return conditioning.batch_certificate(
+            db, args.chamber, args.start, args.end, args.max_age)
     if command == "contact":
         return cards.inspect(db, args.card, args.minute, args.site, args.session, args.touchdown)
     if command == "plan":

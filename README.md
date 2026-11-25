@@ -74,3 +74,25 @@ python -B -m wafer_retest --db env.db environment-record fixtures/environment-re
 python -B -m wafer_retest --db env.db environment-trace DRY-1 12 26 --max-age 4
 python -B -m wafer_retest --db env.db audit
 ```
+
+### 槽位交接与每盒环境凭证
+
+同一准备腔的左右槽可在读数里加 `slot`（如 `LEFT`、`RIGHT`）；不带 `slot` 的旧收件格式和 `environment-trace CHAMBER ...` 整腔查询保持不变。`fixtures/environment-slots.json` 是一份可重复 `load` 的示例：12 分钟时左槽露点 16°C 干燥、右槽 18.5°C 凝露风险，15 分钟后两槽露点均降到 16°C，并附有两张双签槽位交接单。
+
+```powershell
+python -B -m wafer_retest --db slots.db init
+python -B -m wafer_retest --db slots.db load fixtures/environment-slots.json
+python -B -m wafer_retest --db slots.db batch-certificate PREP-SLOT 12 18 --max-age 3
+python -B -m wafer_retest --db slots.db box-certificate PREP-SLOT BOX-LEFT 12 18 --max-age 3
+```
+
+收件命令 `slot-handover` 登记双签槽位交接单（`handover/chamber/slot/box/starts/ends/signers`），`dry-recovery` 登记恢复干燥签认（另带 `slot/box/starts/ends/signers`）。同号重投必须与原单完全一致，改动区间会按冲突退件，因此重投不能把一段恢复变长。
+
+裁决口径：
+
+- 只有整腔收件、没有可核验（双签）槽位归属时，`batch-certificate` 扫描全部生效槽位，任何凝露风险或环境缺口都使共批凭证保持 `PENDING`。
+- 有双签交接后，`box-certificate` 只证明该盒自己的连续存放路径：监视器槽位、采样有效期内的分钟与盒子实际占用分钟必须逐分钟重合；归属短缺、一盒多槽或同槽重盒都标为待核。
+- 经过凝露风险槽位的盒子移到干燥位置不会自动合格。只有满足以下全部条件的双签恢复签认才能清除末次风险：签认区间起点晚于最后一个风险分钟、整段每一分钟都有对应槽位的现有干燥读数支持、连续达到三分钟。未知或冲突分钟会打断连续性，不能把两段干燥拼成一次恢复。
+
+`conditioning.certificate(db, chamber, box, start, end, max_age)` 与 `conditioning.batch_certificate(...)` 返回 `decision`（`CERTIFIED`/`PENDING`，并可直接与 `READY`/`HOLD`、`DRY`/`WET_RISK`/`UNKNOWN` 等既有状态字面量比较）、`segments`、`reasons`、`issues` 和恢复签认核验明细。
+
