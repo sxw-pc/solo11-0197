@@ -4,12 +4,16 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-from . import audit, cards, coordinates, release, sampling, workflow
+from . import audit, bin_crosswalk, cards, coordinates, release, sampling, workflow
 from .db import RuleError, connect, initialize, require, transaction
 
 
 def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8-sig"))
+
+
+def _configure_crosswalk(operation):
+    bin_crosswalk.configure_arguments(operation)
 
 
 def load(db, path):
@@ -67,6 +71,11 @@ def parser():
     commands.add_parser("replay").add_argument("file")
     commands.add_parser("audit")
     commands.add_parser("project").add_argument("session")
+    crosswalk = commands.add_parser(
+        "bin-crosswalk", help="prove BIN equivalence and convert an old machine map")
+    _configure_crosswalk(crosswalk)
+    for alias in ("crosswalk", "bin_crosswalk", "bin-crosswalk-convert"):
+        _configure_crosswalk(commands.add_parser(alias, help=argparse.SUPPRESS))
     commands.add_parser("plan").add_argument("plan")
     for name in ("recompute", "status", "publish", "export"):
         operation = commands.add_parser(name)
@@ -101,6 +110,8 @@ def dispatch(db, args):
         return demo(db)
     if command == "project":
         return coordinates.project(db, args.session)
+    if command in ("bin-crosswalk", "crosswalk", "bin_crosswalk", "bin-crosswalk-convert"):
+        return bin_crosswalk.dispatch_namespace(args, db)
     if command == "contact":
         return cards.inspect(db, args.card, args.minute, args.site, args.session, args.touchdown)
     if command == "plan":
@@ -121,12 +132,17 @@ def main(argv=None):
                 initialize(db)
                 result = {"schema": db.execute("PRAGMA user_version").fetchone()[0]}
             else:
-                if args.command in ("demo", "replay"):
+                if args.command in ("demo", "replay", "bin-crosswalk", "crosswalk",
+                                     "bin_crosswalk", "bin-crosswalk-convert"):
                     initialize(db)
                 require(db.execute("PRAGMA user_version").fetchone()[0] == 1, "initialize a v1 ledger first")
                 with transaction(db):
                     result = dispatch(db, args)
         print(json.dumps(result, ensure_ascii=True, sort_keys=True, indent=2))
-        return 2 if args.command == "audit" and result["decision"] == "MISMATCH" else 0
+        if args.command == "audit" and result["decision"] == "MISMATCH":
+            return 2
+        if getattr(args, "strict", False) and isinstance(result, dict) and result.get("pending"):
+            return 2
+        return 0
     except (ValueError, OSError, sqlite3.Error, TypeError, KeyError) as error:
         command.exit(2, f"wafer-retest: {error}\n")

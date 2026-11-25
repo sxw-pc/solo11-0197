@@ -1,0 +1,58 @@
+{
+  "tool": "bin-crosswalk",
+  "schema": "bin-crosswalk-request/v1",
+  "description": "Old probe machine WAT code 0 PASS on closed [90,110] was split into new L PASS [90,100] and H PASS [101,110]. Synthetic data.",
+  "source_dictionary": {
+    "dictionary": "BIN-OLD-XWALK",
+    "state": "SEALED",
+    "rules": [
+      {"channel": "ET", "code": "0", "grade": "PASS"},
+      {"channel": "ET", "code": "1", "grade": "MARGINAL"},
+      {"channel": "ET", "code": "9", "grade": "FAIL"},
+      {"channel": "WAT", "code": "0", "grade": "PASS", "lo": 90, "hi": 110},
+      {"channel": "WAT", "code": "7", "grade": "MARGINAL", "lo": 40, "hi": 60}
+    ]
+  },
+  "target_dictionary": {
+    "dictionary": "BIN-NEW-XWALK",
+    "state": "SEALED",
+    "rules": [
+      {"channel": "ET", "code": "0", "grade": "PASS"},
+      {"channel": "ET", "code": "1", "grade": "MARGINAL"},
+      {"channel": "ET", "code": "9", "grade": "FAIL"},
+      {"channel": "WAT", "code": "L", "grade": "PASS", "lo": 90, "hi": 100},
+      {"channel": "WAT", "code": "H", "grade": "PASS", "lo": 101, "hi": 110},
+      {"channel": "WAT", "code": "F", "grade": "FAIL"}
+    ]
+  },
+  "old_map": {
+    "session": "XWALK-SAMPLE",
+    "lot": "LOT-P7",
+    "card": "PC-1",
+    "wafer": "W01",
+    "measured_at": 10,
+    "pitch_u": 10,
+    "pitch_v": 20,
+    "origin_u": 0,
+    "origin_v": 0,
+    "plan": null,
+    "measurements": [
+      {"id": "W90",  "u": 0,  "v": 0,  "site": 1, "touchdown": "X90",  "channel": "WAT", "code": "0", "value": 90},
+      {"id": "W100", "u": 10, "v": 0,  "site": 1, "touchdown": "X100", "channel": "WAT", "code": "0", "value": 100},
+      {"id": "W101", "u": 20, "v": 0,  "site": 1, "touchdown": "X101", "channel": "WAT", "code": "0", "value": 101},
+      {"id": "W110", "u": 0,  "v": 20, "site": 1, "touchdown": "X110", "channel": "WAT", "code": "0", "value": 110},
+      {"id": "W89",  "u": 10, "v": 20, "site": 1, "touchdown": "X89",  "channel": "WAT", "code": "0", "value": 89},
+      {"id": "W111", "u": 20, "v": 20, "site": 1, "touchdown": "X111", "channel": "WAT", "code": "0", "value": 111},
+      {"id": "WEDGE-LO", "u": 0, "v": 40, "site": 1, "touchdown": "XLO", "channel": "WAT", "code": "0", "value": 90},
+      {"id": "WGAP", "u": 10, "v": 40, "site": 1, "touchdown": "XGAP", "channel": "WAT", "code": "7", "value": 50},
+      {"id": "WUNK", "u": 20, "v": 40, "site": 1, "touchdown": "XUNK", "channel": "WAT", "code": "404", "value": 95},
+      {"id": "ET0",  "u": 0,  "v": 60, "site": 1, "touchdown": "XET",  "channel": "ET",  "code": "0", "value": 1}
+    ]
+  },
+  "interval_readings": [
+    {"id": "RNG-100-101", "channel": "WAT", "old_code": "0", "value_range": [100, 101]},
+    {"id": "RNG-95-97", "channel": "WAT", "old_code": "0", "range": [95, 97]},
+    {"id": "RNG-GAP-45-55", "channel": "WAT", "old_code": "7", "lo": 45, "hi": 55},
+    {"id": "RNG-UNKNOWN", "channel": "WAT", "old_code": "404", "interval": [90, 91]}
+  ]
+}
