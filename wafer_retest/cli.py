@@ -4,7 +4,7 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-from . import audit, cards, coordinates, release, sampling, workflow
+from . import audit, cards, coordinates, map_fragments, release, sampling, workflow
 from .db import RuleError, connect, initialize, require, transaction
 
 
@@ -67,6 +67,10 @@ def parser():
     commands.add_parser("replay").add_argument("file")
     commands.add_parser("audit")
     commands.add_parser("project").add_argument("session")
+    fragments = commands.add_parser("fragments", help="inspect fragmented map intake for a session")
+    fragments.add_argument("session")
+    fragments.add_argument("--release", action="store_true", help="deliver groups proven safe now")
+    commands.add_parser("fragment-release", help="run cover-gated delivery once").add_argument("session")
     commands.add_parser("plan").add_argument("plan")
     for name in ("recompute", "status", "publish", "export"):
         operation = commands.add_parser(name)
@@ -101,6 +105,12 @@ def dispatch(db, args):
         return demo(db)
     if command == "project":
         return coordinates.project(db, args.session)
+    if command == "fragments":
+        if getattr(args, "release", False):
+            return map_fragments.release_ready(db, args.session)
+        return map_fragments.status(db, args.session)
+    if command == "fragment-release":
+        return map_fragments.release_ready(db, args.session)
     if command == "contact":
         return cards.inspect(db, args.card, args.minute, args.site, args.session, args.touchdown)
     if command == "plan":

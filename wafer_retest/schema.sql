@@ -75,5 +75,26 @@ CREATE UNIQUE INDEX IF NOT EXISTS one_active_release ON releases(lot) WHERE stat
 CREATE TABLE IF NOT EXISTS journal (
     seq INTEGER PRIMARY KEY, command TEXT NOT NULL, arguments TEXT NOT NULL, receipt TEXT NOT NULL
 );
+-- 分卷 map 收件暂存：未获准交付的卷只进这些表，不进 measurements，
+-- 因而 coordinates.project / inspection.collect 看不到它们。
+CREATE TABLE IF NOT EXISTS map_fragments (
+    session TEXT NOT NULL REFERENCES sessions(id),
+    part TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    digest TEXT NOT NULL,
+    PRIMARY KEY(session, part)
+);
+CREATE TABLE IF NOT EXISTS map_fragment_parts (
+    session TEXT PRIMARY KEY REFERENCES sessions(id),
+    expected_count INTEGER,
+    declared_complete INTEGER NOT NULL DEFAULT 0
+);
+-- 质检员认可的封面清单（每卷格点/落针/站点/通道，可带框架）。
+CREATE TABLE IF NOT EXISTS map_covers (
+    session TEXT PRIMARY KEY REFERENCES sessions(id),
+    inspector TEXT,
+    frame TEXT,
+    payload TEXT NOT NULL
+);
 PRAGMA user_version = 1;
 

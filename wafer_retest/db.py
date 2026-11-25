@@ -18,15 +18,19 @@ def connect(path):
 
 def initialize(db):
     version = db.execute("PRAGMA user_version").fetchone()[0]
+    schema = Path(__file__).with_name("schema.sql").read_text(encoding="utf-8")
     if version == 0:
-        schema = Path(__file__).with_name("schema.sql").read_text(encoding="utf-8")
         try:
             db.executescript("BEGIN IMMEDIATE;\n" + schema + "\nCOMMIT;")
         except BaseException:
             if db.in_transaction:
                 db.rollback()
             raise
-    elif version != 1:
+    elif version == 1:
+        # Additive CREATE ... IF NOT EXISTS statements bring v1 files up to
+        # date without changing their user version or existing rows.
+        db.executescript(schema)
+    else:
         raise RuleError(f"unsupported schema version: {version}")
 
 

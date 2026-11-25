@@ -75,7 +75,17 @@ def die_mask(db, lot):
         "SELECT x,y,sector FROM dies WHERE lot=? ORDER BY x,y", (lot,))}
 
 
-def ingest(db, session, lot, card, measured_at, pitch_u, pitch_v, measurements, wafer, plan=None, origin_u=0, origin_v=0):
+def ingest(db, session, lot, card, measured_at, pitch_u, pitch_v, measurements, wafer,
+           plan=None, origin_u=0, origin_v=0, **fragment_options):
+    # 兼容直接以 coordinates.ingest 投递分卷信封的调用方式。
+    if fragment_options and any(key in fragment_options for key in (
+            "part", "fragment", "volume", "part_no", "volume_no", "expected_parts",
+            "part_count", "volume_count", "total", "complete", "final")):
+        from .map_fragments import receive_fragment
+        return receive_fragment(db, session=session, lot=lot, card=card,
+                                measured_at=measured_at, pitch_u=pitch_u, pitch_v=pitch_v,
+                                measurements=measurements, wafer=wafer, plan=plan,
+                                origin_u=origin_u, origin_v=origin_v, **fragment_options)
     get(db, "SELECT id FROM wafers WHERE lot=? AND id=?", (lot, wafer), "wafer for lot")
     card_row = get(db, "SELECT * FROM cards WHERE id=?", (card,), "card")
     require(integer(measured_at) >= 0, "negative measurement minute")
@@ -120,9 +130,16 @@ def add_anchors(db, session, anchors):
         changed |= insert_once(db, "anchors", {"session": session, "id": token(anchor["id"])}, {
             "x": x, "y": y, "u": u, "v": v, "source": source,
         })
-    if changed:
+    # 框架可能在这批锚点后才首次对齐（或经高优先级锚点重新核验），
+    # 若该场次走分卷收件，立即重判可提前交付的读数组。
+    fragment_delivery = False
+    if db.execute("SELECT 1 FROM map_fragments WHERE session=? LIMIT 1", (session,)).fetchone():
+        from .map_fragments import release_ready
+        outcome = release_ready(db, session, touch_lot=False)
+        fragment_delivery = bool(outcome["delivered"])
+    if changed or fragment_delivery:
         touch(db, record["lot"])
-    return {"session": session, "changed": changed}
+    return {"session": session, "changed": bool(changed or fragment_delivery)}
 
 
 def fit(session, anchors):

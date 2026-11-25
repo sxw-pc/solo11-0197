@@ -43,7 +43,28 @@ python -B -m wafer_retest --db ops.db recompute LOT-P7
 python -B -m wafer_retest --db ops.db publish LOT-P7
 ```
 
-`load` 接受一组 `{"command":"map","args":{...}}` 操作，整组原子提交。`lot`、`map`、`anchors`、`card`、`qualify`、`evidence`、`dictionary`、`seal-dictionary`、`bind-dictionary`、`create-plan`、`transition-plan` 各自也接受一个文件，文件内容为相应的 `args` 对象。四份 `fixtures/*.json` 给出完整输入字段示例。命令和导出均使用 UTF-8 JSON。
+`load` 接受一组 `{"command":"map","args":{...}}` 操作，整组原子提交。`lot`、`map`、`anchors`、`card`、`qualify`、`evidence`、`dictionary`、`seal-dictionary`、`bind-dictionary`、`create-plan`、`transition-plan` 以及 `map-fragment`、`map-cover` 各自也接受一个文件，文件内容为相应的 `args` 对象。`fixtures/*.json` 给出完整输入字段示例（含 `map-fragments.json` 分卷样例）。命令和导出均使用 UTF-8 JSON。
+
+## 分卷 map 收件
+
+大 map 可以按“卷”（`part`/`fragment`/`volume` 编号）逐卷投递，实现位于 `wafer_retest/map_fragments.py`，样例与回归见 `fixtures/map-fragments.json`、`tests/test_map_fragments.py`。不带分卷字段的 `map` 仍是原来的整份 map，行为不变；带 `part`（以及可选的总卷数 `expected_parts`，或 `"parts": N`）时自动路由到分卷收件。
+
+```powershell
+python -B -m wafer_retest --db ops.db map-fragment volume1.json   # 暂存/判定并尽量提前交付
+python -B -m wafer_retest --db ops.db map-cover cover.json       # 质检员认可封面清单
+python -B -m wafer_retest --db ops.db fragments FRAG-1            # 只读查看各卷/各组状态
+python -B -m wafer_retest --db ops.db fragments FRAG-1 --release  # 再执行一次准入交付
+python -B -m wafer_retest --db ops.db fragment-release FRAG-1
+python -B -m wafer_retest --db ops.db map-fragment-complete done.json
+```
+
+收件与交付规则：
+
+- **无认可封面**：分卷只进 `map_fragments` 暂存表，不进 `measurements`，所以 `project` 与 `inspection.collect` 看不到它们。等声明总卷数到齐（不同分卷号去重计数）或 `map-fragment-complete` 显式宣告齐全，才整批写入 `measurements`，碰撞仍完全交给 `coordinates.project` 裁决，投影结果与一次整份 `map` 一致。
+- **有认可封面**（`map-cover`，质检员署名 `inspector`，逐卷列出原始格点 `u/v`、落针 `touchdown`、站点 `site`、通道 `channel`，可带 `frame` 或每条预期 `x/y`）：每卷实物先与封面对照。实物与封面不符的新分卷以 `cover mismatch` **整卷拒绝**（事务回滚，不写入任何行，更不会覆盖已提前交付的测量）；相同分卷号且载荷逐字节一致的重投返回 `duplicate/changed=false`，不重复采录；同分卷号但内容变化按 `conflicting redelivery` 拒绝。
+- **提前交付的安全证明**：先用会话 `origin_u/origin_v`、`pitch_u/pitch_v` 和批次掩膜，按当前锚点拟合框架把封面**全量**条目投影成实际裸片位置。框架未对齐（如 `ANCHORS_INSUFFICIENT`）或与封面框架不一致（`FRAME_MISMATCH`）时只等待重新核验；补入更高优先级锚点使框架重新对齐后，`anchors` 命令会自动重判。
+- 仅当某个 ET/WAT 组在已收卷中通道齐全，且封面全量条目证明：(1) 该裸片+该通道不会出现第二处（否则记 `DUPLICATE_CHANNEL_LOCATION` 风险），(2) 同一 `touchdown`+`site` 不会落到第二个裸片（否则记 `SITE_LANDING_ALIAS` 风险），才把该组原子写入 `measurements`。不能只按分卷号或原始读数 ID 判断独立性。交付后的行就是普通测量，既有 `project`、`recompute`、采样计划与发布/导出流程可直接使用。
+- 镜像样例（`MX, dx=2, dy=0`，步距 10/20）中卷 1 含 `(0,0)` 与 `(1,0)` 两处完整读数；封面显示后续卷可能在 `(0,0)` 加测 ET、并把 `B00/site1` 用到 `(0,1)`，故只有 `(1,0)` 提前交付；无封面时两处都暂扣。
 
 ## 裁决规则
 

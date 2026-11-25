@@ -1,0 +1,273 @@
+[
+  {
+    "command": "lot",
+    "args": {
+      "lot": "LOT-P7",
+      "width": 3,
+      "height": 2,
+      "channels": ["ET", "WAT"],
+      "fail_limit": 1,
+      "dies": [
+        [0, 0, "LEFT"],
+        [0, 1, "LEFT"],
+        [1, 0, "LEFT"],
+        [1, 1, "LEFT"],
+        [2, 0, "RIGHT"]
+      ],
+      "wafers": ["W01"]
+    }
+  },
+  {
+    "command": "card",
+    "args": {
+      "card": "PC-1",
+      "sites": 2
+    }
+  },
+  {
+    "command": "qualify",
+    "args": {
+      "qualification": "Q1",
+      "card": "PC-1",
+      "starts": 0,
+      "ends": 20,
+      "verdict": "PASS"
+    }
+  },
+  {
+    "command": "dictionary",
+    "args": {
+      "dictionary": "BIN-1",
+      "rules": [
+        {"channel": "ET", "code": "0", "grade": "PASS"},
+        {"channel": "ET", "code": "1", "grade": "MARGINAL"},
+        {"channel": "ET", "code": "9", "grade": "FAIL"},
+        {"channel": "WAT", "code": "0", "grade": "PASS", "lo": 90, "hi": 110}
+      ]
+    }
+  },
+  {
+    "command": "seal-dictionary",
+    "args": {"dictionary": "BIN-1"}
+  },
+  {
+    "command": "bind-dictionary",
+    "args": {"lot": "LOT-P7", "dictionary": "BIN-1"}
+  },
+  {
+    "command": "map-fragment",
+    "args": {
+      "session": "FRAG-1",
+      "lot": "LOT-P7",
+      "wafer": "W01",
+      "card": "PC-1",
+      "measured_at": 10,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "origin_u": 0,
+      "origin_v": 0,
+      "plan": null,
+      "part": 1,
+      "expected_parts": 3,
+      "measurements": [
+        {
+          "id": "00-ET",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B00",
+          "channel": "ET",
+          "code": "9",
+          "value": 1
+        },
+        {
+          "id": "00-WAT",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B00",
+          "channel": "WAT",
+          "code": "0",
+          "value": 101
+        },
+        {
+          "id": "10-ET",
+          "u": 10,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B10",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "10-WAT",
+          "u": 10,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B10",
+          "channel": "WAT",
+          "code": "0",
+          "value": 99
+        }
+      ]
+    }
+  },
+  {
+    "command": "map-cover",
+    "args": {
+      "session": "FRAG-1",
+      "inspector": "QC-REN",
+      "frame": {"orientation": "MX", "dx": 2, "dy": 0},
+      "parts": [
+        {
+          "part": 1,
+          "measurements": [
+            {"id": "00-ET", "u": 20, "v": 0, "site": 1, "touchdown": "B00", "channel": "ET"},
+            {"id": "00-WAT", "u": 20, "v": 0, "site": 1, "touchdown": "B00", "channel": "WAT"},
+            {"id": "10-ET", "u": 10, "v": 0, "site": 1, "touchdown": "B10", "channel": "ET"},
+            {"id": "10-WAT", "u": 10, "v": 0, "site": 1, "touchdown": "B10", "channel": "WAT"}
+          ]
+        },
+        {
+          "part": 2,
+          "measurements": [
+            {"id": "00-ET-2", "u": 20, "v": 0, "site": 1, "touchdown": "B00X", "channel": "ET"}
+          ]
+        },
+        {
+          "part": 3,
+          "measurements": [
+            {"id": "01-ET", "u": 20, "v": 20, "site": 1, "touchdown": "B00", "channel": "ET"}
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "command": "anchors",
+    "args": {
+      "session": "FRAG-1",
+      "anchors": [
+        {"id": "F00", "u": 20, "v": 0, "x": 0, "y": 0, "source": "FIDUCIAL"},
+        {"id": "F10", "u": 10, "v": 0, "x": 1, "y": 0, "source": "FIDUCIAL"},
+        {"id": "F01", "u": 20, "v": 20, "x": 0, "y": 1, "source": "FIDUCIAL"}
+      ]
+    }
+  },
+  {
+    "command": "map-fragment-release",
+    "args": {"session": "FRAG-1"}
+  },
+  {
+    "command": "map-fragment",
+    "args": {
+      "session": "FRAG-1",
+      "lot": "LOT-P7",
+      "wafer": "W01",
+      "card": "PC-1",
+      "measured_at": 10,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "plan": null,
+      "part": 2,
+      "expected_parts": 3,
+      "measurements": [
+        {
+          "id": "00-ET-2",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B00X",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "command": "map-fragment",
+    "args": {
+      "session": "FRAG-1",
+      "lot": "LOT-P7",
+      "wafer": "W01",
+      "card": "PC-1",
+      "measured_at": 10,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "plan": null,
+      "part": 1,
+      "expected_parts": 3,
+      "measurements": [
+        {
+          "id": "00-ET",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B00",
+          "channel": "ET",
+          "code": "9",
+          "value": 1
+        },
+        {
+          "id": "00-WAT",
+          "u": 20,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B00",
+          "channel": "WAT",
+          "code": "0",
+          "value": 101
+        },
+        {
+          "id": "10-ET",
+          "u": 10,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B10",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        },
+        {
+          "id": "10-WAT",
+          "u": 10,
+          "v": 0,
+          "site": 1,
+          "touchdown": "B10",
+          "channel": "WAT",
+          "code": "0",
+          "value": 99
+        }
+      ]
+    }
+  },
+  {
+    "command": "map-fragment",
+    "args": {
+      "session": "FRAG-1",
+      "lot": "LOT-P7",
+      "wafer": "W01",
+      "card": "PC-1",
+      "measured_at": 10,
+      "pitch_u": 10,
+      "pitch_v": 20,
+      "plan": null,
+      "part": 3,
+      "expected_parts": 3,
+      "measurements": [
+        {
+          "id": "01-ET",
+          "u": 20,
+          "v": 20,
+          "site": 1,
+          "touchdown": "B00",
+          "channel": "ET",
+          "code": "0",
+          "value": 1
+        }
+      ]
+    }
+  }
+]

@@ -1,10 +1,29 @@
-from . import cards, coordinates, dictionary, release, sampling
+from . import cards, coordinates, dictionary, map_fragments, release, sampling
 from .db import dump, require
 
 
 INPUT = {
     "lot": coordinates.register_lot,
-    "map": coordinates.ingest,
+    "map": map_fragments.map_entry,
+    "map-fragment": map_fragments.receive_fragment,
+    "map-fragments": map_fragments.receive_fragment,
+    "receive-fragment": map_fragments.receive_fragment,
+    "ingest-fragment": map_fragments.receive_fragment,
+    "add-fragment": map_fragments.receive_fragment,
+    "receive": map_fragments.receive_fragment,
+    "map-receive": map_fragments.receive_fragment,
+    "fragment": map_fragments.receive_fragment,
+    "map-volume": map_fragments.receive_fragment,
+    "volume": map_fragments.receive_fragment,
+    "map-part": map_fragments.receive_fragment,
+    "map-cover": map_fragments.approve_cover,
+    "cover": map_fragments.approve_cover,
+    "approve-cover": map_fragments.approve_cover,
+    "cover-manifest": map_fragments.approve_cover,
+    "fragment-cover": map_fragments.approve_cover,
+    "map-manifest": map_fragments.approve_cover,
+    "map-fragment-release": map_fragments.release_command,
+    "map-fragment-complete": map_fragments.complete_command,
     "anchors": coordinates.add_anchors,
     "card": cards.register,
     "qualify": cards.qualify,
